@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Productos - REPASA{% endblock %}
+
+{% block content %}
+    <h1 class="mt- text-center">Lista de Productos</h1>
+    <ul class="list-group">
+        {% for product in products %}
+            <li class="list-group-item">{{ product.name }} - ${{ product.price }}</li>
+        {% endfor %}
+    </ul>
+    <p class="lead"><a class="btn btn-primary" href="{{ url_for('index') }}">Volver al Inicio</a></p>
+{% endblock %}
