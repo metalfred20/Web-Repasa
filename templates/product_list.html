@@ -3,7 +3,7 @@
 {% block title %}Productos - REPASA{% endblock %}
 
 {% block content %}
-    <h1 class="mt- text-center">Lista de Productos</h1>
+    <h1 class="mt-3 text-center">Lista de Productos</h1>
     <ul class="list-group">
         {% for product in products %}
             <li class="list-group-item">{{ product.name }} - ${{ product.price }}</li>
