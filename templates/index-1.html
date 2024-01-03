@@ -1,11 +1,11 @@
-<!-- templates/index.html -->
+<!-- templates/login.html -->
 {% extends 'base.html' %}
 
 {% block title %}Inicio - REPASA{% endblock %}
 
 {% block content %}
+    <img src="templates/img.png" alt="Logo REPASA" class="img-fluid mx-auto d-block mt-3" style="max-height: 500px;">
+
     <h1 class="mt-5">Bienvenido a REPASA S.A. </h1>
     <p class="lead"><a class="btn btn-primary" href="{{ url_for('product_list') }}">Ver productos</a></p>
-
-     <img width="500px" src="/img.png" alt="Logo de REPASA">
 {% endblock %}
