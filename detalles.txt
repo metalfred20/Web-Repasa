@@ -7,6 +7,17 @@ Login, unicamente tiene una vista, falta agregar base de datos, pendiente por de
 Navbar
 Carrito
 
+WEB-REPASA/
+|-- app.py
+|-- templates/
+|   |-- base.html
+|   |-- cart.html
+|   |-- index.html
+|   |-- login.html
+|   |-- product_list_paginated.html
+|-- img.png
+
+
 
 Explicacion del codigo:
 Este código crea una aplicación web simple para una tienda en línea. La aplicación tiene las siguientes características:
