@@ -6,7 +6,7 @@ Los productos son variables en memoria
 Login, unicamente tiene una vista, falta agregar base de datos, pendiente por definir si seran los mismos usuarios de odoo o seran locales 
 Navbar
 Carrito
-
+Carousel
 WEB-REPASA/
 |-- app.py
 |-- templates/
@@ -15,8 +15,8 @@ WEB-REPASA/
 |   |-- index.html
 |   |-- login.html
 |   |-- product_list_paginated.html
-|-- img.png
-
+|   |-- wordpress.html
+|--
 
 
 Explicacion del codigo:
