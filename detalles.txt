@@ -20,7 +20,7 @@ WEB-REPASA/
 
 
 Explicacion del codigo:
-Este código crea una aplicación web simple para una tienda en línea. La aplicación tiene las siguientes características:
+Este código crea una aplicación web simple para una tienda en línea.. La aplicación tiene las siguientes características:
 
 Página de inicio
 Página de inicio de sesión
