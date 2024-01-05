@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-# Productos
+# Productos que se obtendran de odoo con la api odoorpc
 products = [
     {'id': i, 'name': f'Producto {i}', 'price': 10.0 + i} for i in range(1, 101)
 ]
