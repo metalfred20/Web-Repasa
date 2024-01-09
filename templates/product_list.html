@@ -1,47 +1,13 @@
-<!-- templates/product_list_paginated.html -->
 {% extends 'base.html' %}
 
 {% block title %}Productos - REPASA{% endblock %}
 
 {% block content %}
-    <h1 class="mt-5 text-center">Lista de Productos</h1>
-    <div class="row mt-3">
+    <h1 class="mt-3 text-center">Lista de Productos</h1>
+    <ul class="list-group">
         {% for product in products %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text">Precio: Q{{ product.price }}</p>
-                        <p class="card-text">Descripción: {{ product.description }}</p>
-                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
-                            <button type="submit" class="btn btn-secondary">Agregar al carrito</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <li class="list-group-item">{{ product.name }} - ${{ product.price }}</li>
         {% endfor %}
-    </div>
-
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center mt-3">
-            {% for p in range(1, total_pages + 1) %}
-                {% if p == page %}
-                    <li class="page-item active" aria-current="page">
-                        <span class="page-link">{{ p }}<span class="sr-only">(current)</span></span>
-                    </li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('product_list', page=p) }}">{{ p }}</a></li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-    </nav>
-
-    <a class="btn btn-secondary mt-3" href="{{ url_for('view_cart') }}">Ver Carrito</a>
-
-    <div class="mt-4">
-        <p>Carrito: {{ cart_size }} productos</p>
-        <p>Total: Q{{ total_price }}</p>
-    </div>
+    </ul>
+    <p class="lead"><a class="btn btn-primary" href="{{ url_for('index') }}">Volver al Inicio</a></p>
 {% endblock %}
-
-
