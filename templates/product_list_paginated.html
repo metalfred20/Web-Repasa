@@ -12,8 +12,9 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ product.name }}</h5>
                         <p class="card-text">Precio: Q{{ product.price }}</p>
+                        <p class="card-text">Descripción: {{ product.description }}</p>
                         <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
-                            <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+                            <button type="submit" class="btn btn-secondary">Agregar al carrito</button>
                         </form>
                     </div>
                 </div>
@@ -39,6 +40,8 @@
 
     <div class="mt-4">
         <p>Carrito: {{ cart_size }} productos</p>
-        <p>Total: ${{ total_price }}</p>
+        <p>Total: Q{{ total_price }}</p>
     </div>
 {% endblock %}
+
+
