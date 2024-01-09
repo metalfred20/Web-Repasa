@@ -9,7 +9,6 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# Rutas
 
 # Route for the home page
 @app.route('/')
@@ -21,7 +20,7 @@ def index():
 def login():
     return render_template('login.html')
 
-# Route for a WordPress view
+# Route for a WordPress view, not in use
 @app.route('/wordpress')
 def wordpressview():
     return render_template('wordpress.html')
