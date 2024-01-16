@@ -1,0 +1,36 @@
+<!-- templates/search_products.html -->
+{% extends 'base.html' %}
+
+{% block title %}Buscar Productos - REPASA{% endblock %}
+
+{% block content %}
+    <h1 class="mt-5 text-center">Buscar Productos</h1>
+    
+    <div class="container mt-3">
+        <form class="form-inline my-2 my-lg-0" action="{{ url_for('search_products') }}" method="GET">
+            <input class="form-control mr-sm-2" type="search" placeholder="Buscar productos" aria-label="Search" name="query">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+        </form>
+    </div>
+
+    <div class="row mt-3">
+        {% if search_results %}
+            {% for product in search_results %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">Precio: Q{{ product.price }}</p>
+                            <p class="card-text">Descripción: {{ product.description }}</p>
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
+                                <button type="submit" class="btn btn-secondary">Agregar al carrito</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="lead">No se encontraron resultados.</p>
+        {% endif %}
+    </div>
+{% endblock %}
