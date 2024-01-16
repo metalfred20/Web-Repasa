@@ -9,7 +9,6 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-
 # Route for the home page
 @app.route('/')
 def index():
@@ -140,6 +139,27 @@ def edit_quantity(product_id):
 
     # Redirect back to the shopping cart view
     return redirect(url_for('view_cart'))
+
+@app.route('/search_products', methods=['GET'])
+def search_products():
+    query = request.args.get('query', '')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Realizar la búsqueda en los campos 'name' y 'description'
+    cursor.execute('''
+        SELECT * FROM products
+        WHERE name LIKE ? OR description LIKE ?
+    ''', ('%' + query + '%', '%' + query + '%'))
+
+    search_results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('search_products.html', search_results=search_results)
+
 
 # Function to get the size of the shopping cart
 def get_cart_size():
