@@ -25,12 +25,16 @@
                             <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
                                 <button type="submit" class="btn btn-secondary">Agregar al carrito</button>
                             </form>
+                            
                         </div>
+                        
                     </div>
                 </div>
             {% endfor %}
         {% else %}
             <p class="lead">No se encontraron resultados.</p>
         {% endif %}
+        
     </div>
+    <a class="btn btn-secondary mt-3" href="{{ url_for('product_list') }}">Regresar a Productos</a>   
 {% endblock %}
