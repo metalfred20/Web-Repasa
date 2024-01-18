@@ -1,28 +1,22 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
+import os
 
 app = Flask(__name__, static_url_path='/static')
-
+app.secret_key = "asdfasdf"
 # Function to get a connection to the database
 def get_db_connection():
     conn = sqlite3.connect('ecommerce.db')
     conn.row_factory = sqlite3.Row
+    if 'user_id' in session:
+        user_id = session['user_id']
+
     return conn
 
 # Route for the home page
 @app.route('/')
 def index():
     return render_template('index.html')
-#start mod for login
-def verify_credentials(username, password):
-    conn = sqlite3.connect('ecommerce.db')
-    cursor = conn.cursor()
-    #consult credentials from db
-    query = "SELECT * FROM users WHERE username=? AND password=?"
-    cursor.execute(query, (username, password))
-    user = cursor.fetchone()
-    conn.close()
-    return user
 
 # Route for the login page
 @app.route('/login', methods=['GET', 'POST'])
@@ -30,23 +24,25 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        #verify from db
         user = verify_credentials(username, password)
-        if user:
-            return redirect(url_for('product_list'))
-    return render_template('login.html')
 
-# Route for a WordPress view, not in use
-@app.route('/wordpress')
-def wordpressview():
-    return render_template('wordpress.html')
+        if user:
+            # Establecer la sesión para el usuario
+            session['user_id'] = user['id']
+            return redirect(url_for('product_list'))
+    
+    return render_template('login.html')
 
 # Route to display a paginated list of products
 @app.route('/products')
 def product_list():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
     # Pagination parameters
     page = request.args.get('page', 1, type=int)
-    per_page = 12
+    per_page = 8
 
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
@@ -79,83 +75,56 @@ def product_list():
     )
 
 
-# def product_list():
-#     # Pagination parameters
-#     page = request.args.get('page', 1, type=int)
-#     per_page = 12
-    
-#     start_idx = (page - 1) * per_page
-#     end_idx = start_idx + per_page
-
-#     # Connect to the database
-#     conn = get_db_connection()
-#     cursor = conn.cursor()
-
-#     # Retrieve products for the current page
-#     cursor.execute('SELECT * FROM products LIMIT ?, ?', (start_idx, per_page))
-#     products_to_display = cursor.fetchall()
-
-#     # Calculate total number of products and pages
-#     total_products = cursor.execute('SELECT COUNT(*) FROM products').fetchone()[0]
-#     total_pages = (total_products // per_page) + (1 if total_products % per_page > 0 else 0)
-
-#     # Close the database connection
-#     cursor.close()
-#     conn.close()
-
-#     # Render the template with the paginated product list
-#     return render_template(
-#         'product_list_paginated.html',
-#         products=products_to_display,
-#         page=page,
-#         per_page=per_page,
-#         total_pages=total_pages,
-#         cart_size=get_cart_size(),
-#         total_price=get_total_price()
-#     )
-
-
-
 # Route to add a product to the shopping cart
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Insert the selected product into the shopping cart
-    cursor.execute('INSERT INTO cart (product_id, quantity) VALUES (?, 1)', (product_id,))
+    # Obtener el user_id de la sesión
+    user_id = session.get('user_id')
+
+    # Insertar el producto seleccionado en el carrito del usuario
+    cursor.execute('INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, 1)', (user_id, product_id))
     conn.commit()
 
-    # Close the database connection
     cursor.close()
     conn.close()
 
-    # Redirect back to the product list
     return redirect(url_for('product_list'))
+
 
 # Route to view the shopping cart
 @app.route('/view_cart')
 def view_cart():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Retrieve information about products in the shopping cart
+    user_id = session.get('user_id')
+
+    # Recuperar información sobre los productos en el carrito del usuario
     cursor.execute('''
         SELECT p.id, p.name, p.price, c.quantity
         FROM products p
         JOIN cart c ON p.id = c.product_id
-    ''')
+        WHERE c.user_id = ?
+    ''', (user_id,))
+
     cart_data = cursor.fetchall()
 
-    # Calculate the total price of items in the shopping cart
     total_price = sum(row[2] * row[3] for row in cart_data)
 
-    # Close the database connection
     cursor.close()
     conn.close()
 
-    # Render the template with the shopping cart information
     return render_template('cart.html', cart=cart_data, total_price=total_price)
+
+
 
 # Route to remove a product from the shopping cart
 @app.route('/remove_from_cart/<int:product_id>')
@@ -197,6 +166,9 @@ def edit_quantity(product_id):
 
 @app.route('/search_products', methods=['GET'])
 def search_products():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     query = request.args.get('query', '')
 
     conn = get_db_connection()
@@ -215,6 +187,31 @@ def search_products():
 
     return render_template('search_products.html', search_results=search_results)
 
+#start mod for login
+
+def verify_credentials(username, password):
+    conn = sqlite3.connect('ecommerce.db')
+    cursor = conn.cursor()
+
+    # Consultar credenciales desde la base de datos
+    query = "SELECT * FROM users WHERE username=? AND password=?"
+    cursor.execute(query, (username, password))
+    user = cursor.fetchone()
+
+    # Cerrar la conexión a la base de datos
+    conn.close()
+
+    # Verificar si se encontró un usuario y devolverlo como un diccionario
+    if user:
+        user_dict = {
+            'id': user[0],
+            'username': user[1],
+            'password': user[2]
+            # Agrega otros campos si es necesario
+        }
+        return user_dict
+    else:
+        return None
 
 # Function to get the size of the shopping cart
 def get_cart_size():
