@@ -4,6 +4,8 @@
 {% block title %}Carrito de Compras - REPASA{% endblock %}
 
 {% block content %}
+<br>
+<br>
     <h1 class="mt-5 text-center">Carrito: </h1>
     <ul class="list-group mt-3">
         {% for product in cart %}
@@ -26,7 +28,7 @@
     
     <!-- Agrega el cuadro de Bootstrap para mostrar el total -->
     <div class="card mt-3">
-        <div class="card-body text-right"> <!-- Utiliza la clase text-right para alinear el texto a la derecha -->
+        <div class="card-body text-right"> 
             <h5 class="card-title">Total:</h5>
             <p class="card-text">Q{{ total_price }}</p>
         </div>
