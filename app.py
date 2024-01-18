@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 # Function to get a connection to the database
 def get_db_connection():
@@ -13,10 +13,27 @@ def get_db_connection():
 @app.route('/')
 def index():
     return render_template('index.html')
+#start mod for login
+def verify_credentials(username, password):
+    conn = sqlite3.connect('ecommerce.db')
+    cursor = conn.cursor()
+    #consult credentials from db
+    query = "SELECT * FROM users WHERE username=? AND password=?"
+    cursor.execute(query, (username, password))
+    user = cursor.fetchone()
+    conn.close()
+    return user
 
 # Route for the login page
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        #verify from db
+        user = verify_credentials(username, password)
+        if user:
+            return redirect(url_for('product_list'))
     return render_template('login.html')
 
 # Route for a WordPress view, not in use
@@ -38,8 +55,8 @@ def product_list():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Retrieve products for the current page
-    cursor.execute('SELECT * FROM products LIMIT ?, ?', (start_idx, per_page))
+    # Retrieve products for the current page, including the img_url column
+    cursor.execute('SELECT id, name, price, description, image_url FROM products LIMIT ?, ?', (start_idx, per_page))
     products_to_display = cursor.fetchall()
 
     # Calculate total number of products and pages
@@ -60,6 +77,44 @@ def product_list():
         cart_size=get_cart_size(),
         total_price=get_total_price()
     )
+
+
+# def product_list():
+#     # Pagination parameters
+#     page = request.args.get('page', 1, type=int)
+#     per_page = 12
+    
+#     start_idx = (page - 1) * per_page
+#     end_idx = start_idx + per_page
+
+#     # Connect to the database
+#     conn = get_db_connection()
+#     cursor = conn.cursor()
+
+#     # Retrieve products for the current page
+#     cursor.execute('SELECT * FROM products LIMIT ?, ?', (start_idx, per_page))
+#     products_to_display = cursor.fetchall()
+
+#     # Calculate total number of products and pages
+#     total_products = cursor.execute('SELECT COUNT(*) FROM products').fetchone()[0]
+#     total_pages = (total_products // per_page) + (1 if total_products % per_page > 0 else 0)
+
+#     # Close the database connection
+#     cursor.close()
+#     conn.close()
+
+#     # Render the template with the paginated product list
+#     return render_template(
+#         'product_list_paginated.html',
+#         products=products_to_display,
+#         page=page,
+#         per_page=per_page,
+#         total_pages=total_pages,
+#         cart_size=get_cart_size(),
+#         total_price=get_total_price()
+#     )
+
+
 
 # Route to add a product to the shopping cart
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
