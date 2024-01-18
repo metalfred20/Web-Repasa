@@ -9,7 +9,7 @@
         {% for product in cart %}
             <li class="list-group-item">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span>{{ product.name }} - ${{ product.price }}</span>
+                    <span>{{ product.name }} - Q{{ product.price }}</span>
                     <div class="float-right">
                         <form action="{{ url_for('remove_from_cart', product_id=product.id) }}" method="get" style="display: inline-block;">
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
@@ -23,11 +23,17 @@
             </li>
         {% endfor %}
     </ul>
-
-    <div class="d-flex justify-content-end mt-3">
-        <p class="mr-2">Total: Q{{ total_price }}</p>
-    </div>
-
-    <a class="btn btn-secondary mt-3" href="{{ url_for('index') }}">Volver al inicio</a>
     
+    <!-- Agrega el cuadro de Bootstrap para mostrar el total -->
+    <div class="card mt-3">
+        <div class="card-body text-right"> <!-- Utiliza la clase text-right para alinear el texto a la derecha -->
+            <h5 class="card-title">Total:</h5>
+            <p class="card-text">Q{{ total_price }}</p>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-end mt-3">
+        <a class="btn btn-secondary" href="{{ url_for('index') }}">Volver al inicio</a>
+        <a class="btn btn-secondary ml-2" href="{{ url_for('product_list') }}">Regresar a Productos</a>
+    </div>
 {% endblock %}
