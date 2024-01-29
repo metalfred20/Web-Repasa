@@ -13,6 +13,102 @@ def get_db_connection():
 
     return conn
 
+def get_user_cart_data(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Recupera información sobre los productos en el carrito del usuario
+    cursor.execute('''
+        SELECT p.id, p.name, p.price, c.quantity
+        FROM products p
+        JOIN cart c ON p.id = c.product_id
+        WHERE c.user_id = ?
+    ''', (user_id,))
+
+    cart_data = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return cart_data
+
+def clear_user_cart(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Elimina todos los productos del carrito del usuario
+    cursor.execute('DELETE FROM cart WHERE user_id = ?', (user_id,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+###create order
+@app.route('/generate_order', methods=['GET', 'POST'])
+def generate_order():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        user_id = session['user_id']
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Get the user's cart information
+        cart_data = get_user_cart_data(user_id)
+
+        # Extract product_ids and quantities from the cart_data
+        product_ids = [product['id'] for product in cart_data]
+        quantities = [product['quantity'] for product in cart_data]
+
+        # Insert a single order with all products from the cart
+        cursor.execute('INSERT INTO orders (user_id, product_ids, quantities) VALUES (?, ?, ?)',
+                       (user_id, ",".join(map(str, product_ids)), ",".join(map(str, quantities))))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        # Clear the user's cart after creating the order
+        clear_user_cart(user_id)
+
+        order_generated = True  # Indicate that the order was successfully generated
+
+        return render_template('create_order.html', cart=[], order_generated=order_generated)
+
+    # Retrieve cart information for the current user
+    user_id = session['user_id']
+    cart_data = get_user_cart_data(user_id)
+
+    return render_template('create_order.html', cart=cart_data)
+
+# Modificación en la función view_orders en tu archivo de rutas
+@app.route('/view_orders')
+def view_orders():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Retrieve user's orders with product names from the orders and products tables
+    cursor.execute('''
+        SELECT o.id, p.name, o.product_ids, o.quantities
+        FROM orders o
+        JOIN products p ON ',' || o.product_ids || ',' LIKE '%,' || CAST(p.id AS TEXT) || ',%'
+        WHERE o.user_id = ?
+    ''', (user_id,))
+
+    orders = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('view_orders.html', orders=orders)
+
+
+
+###
 # Route for the home page
 @app.route('/')
 def index():
@@ -124,22 +220,17 @@ def view_cart():
 
     return render_template('cart.html', cart=cart_data, total_price=total_price)
 
-
-
 # Route to remove a product from the shopping cart
 @app.route('/remove_from_cart/<int:product_id>')
 def remove_from_cart(product_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-
     # Remove the selected product from the shopping cart
     cursor.execute('DELETE FROM cart WHERE product_id = ?', (product_id,))
     conn.commit()
-
     # Close the database connection
     cursor.close()
     conn.close()
-
     # Redirect back to the shopping cart view
     return redirect(url_for('view_cart'))
 
