@@ -4,11 +4,15 @@
 {% block title %}Login - REPASA{% endblock %}
 
 {% block content %}
+<br>
+<br>
+
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
                     <h1 class="mt-2">Login Clientes</h1>
+                    <img src="http://imgfz.com/i/r13OzBp.jpeg" alt="Logo repasa" class="img-fluid mt-1">
                 </div>
                 <div class="card-body">
                     <form method="post" action="{{ url_for('login') }}">
@@ -20,10 +24,17 @@
                             <label for="password">Contraseña</label>
                             <input type="password" name="password" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                        <button type="submit" class="btn btn-danger">Iniciar Sesión</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 {% endblock %}
+=======
+    <div class="text-center mt-3">
+        <p class="lead">©2024. Repasa, S.A. Reservados Todos los Derechos.</p>
+    </div>
+{% endblock %}
+>>>>>>> a2f300081bde518657d85824ace8bbb23247131f

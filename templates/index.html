@@ -4,12 +4,18 @@
 {% block title %}Inicio - REPASA{% endblock %}
 
 {% block content %}
+<br>
+<br>
+
+<div class="container mt-5">
     <div class="text-center">
-        <h1 class="mt-5 display-4">Bienvenido a REPASA S.A.</h1>
+        <h1 class="display-4 mb-4">Bienvenido a REPASA S.A.</h1>
         <p class="lead">
-            <a class="btn btn-primary" href="{{ url_for('product_list') }}">Ver productos</a>
+            <a class="btn btn-danger btn-lg" href="{{ url_for('login') }}">Iniciar Sesión</a>
         </p>
     </div>
+</div>
+
 
     <div id="imageCarousel" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
@@ -97,4 +103,33 @@
     <div class="text-center mt-3">
         <p class="lead">©2024. Repasa, S.A. Reservados Todos los Derechos.</p>
     </div>
+<<<<<<< HEAD
 {% endblock %}
+=======
+    <div class="jumbotron jumbotron-fluid mt-4">
+        <div class="container text-center">
+            <h2 class="display-5">Descubre Quiénes Somos</h2>
+        </div>
+    </div>
+
+        <!-- Tarjeta de Misión -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Misión</h5>
+                <p class="card-text">Satisfacer a nuestros clientes por medio de productos de la mejor calidad e importados que permitirá aumentar sus oportunidades de venta y así mantener la confianza hacia la empresa.</p>
+                <br>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Visión -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Visión</h5>
+                <p class="card-text">Ser líder en la distribución de productos de calidad a nivel nacional por medio de nuestros distribuidores para llegar al cliente final con satisfacción.</p>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+>>>>>>> a2f300081bde518657d85824ace8bbb23247131f

@@ -4,12 +4,14 @@
 {% block title %}Carrito de Compras - REPASA{% endblock %}
 
 {% block content %}
+<br>
+<br>
     <h1 class="mt-5 text-center">Carrito: </h1>
     <ul class="list-group mt-3">
         {% for product in cart %}
             <li class="list-group-item">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span>{{ product.name }} - ${{ product.price }}</span>
+                    <span>{{ product.name }} - Q{{ product.price }}</span>
                     <div class="float-right">
                         <form action="{{ url_for('remove_from_cart', product_id=product.id) }}" method="get" style="display: inline-block;">
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
@@ -23,11 +25,21 @@
             </li>
         {% endfor %}
     </ul>
-
-    <div class="d-flex justify-content-end mt-3">
-        <p class="mr-2">Total: Q{{ total_price }}</p>
-    </div>
-
-    <a class="btn btn-secondary mt-3" href="{{ url_for('index') }}">Volver al inicio</a>
     
+<<<<<<< HEAD
 {% endblock %}
+=======
+    <!-- Agrega el cuadro de Bootstrap para mostrar el total -->
+    <div class="card mt-3">
+        <div class="card-body text-right"> 
+            <h5 class="card-title">Total:</h5>
+            <p class="card-text">Q{{ total_price }}</p>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-end mt-3">
+        <a class="btn btn-secondary" href="{{ url_for('index') }}">Volver al inicio</a>
+        <a class="btn btn-secondary ml-2" href="{{ url_for('product_list') }}">Regresar a Productos</a>
+    </div>
+{% endblock %}
+>>>>>>> a2f300081bde518657d85824ace8bbb23247131f
